@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeamDev - JSON Validator</title>
+  <meta name="description" content="Validate, Fix, and Format JSON — by TeamDev" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <img src="./logo.png" alt="TeamDev Logo" class="logo" />
+      <h1>TeamDev JSON Validator</h1>
+    </div>
+    
+    <a href="../index.html" class="back-home-btn">Back To Home 🏡</a>
+  </header>
+
+  <main>
+    <section class="editor">
+      <textarea id="jsonInput" placeholder='Paste or type your JSON here...'></textarea>
+
+      <div class="buttons">
+        <button id="validateBtn">Validate</button>
+        <button id="fixBtn">Fix</button>
+        <button id="beautifyBtn">Beautify</button>
+        <button id="minifyBtn">Minify</button>
+        <button id="copyValidBtn">Copy JSON</button>
+        <button id="downloadBtn">Download</button>
+        <input type="file" id="fileInput" accept=".json" hidden />
+        <button id="uploadBtn">Import</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+    </section>
+
+    <section class="output">
+      <h2>Valid JSON</h2>
+      <pre id="jsonOutput"></pre>
+    </section>
+
+    <section class="markdown">
+      <h2>Explanation</h2>
+      <div id="markdownOutput"></div>
+    </section>
+
+    <section class="tips">
+      <h3>Tips</h3>
+      <ul id="tipsList"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 TeamDev | Made with 💛 + 💚</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
