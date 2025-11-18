@@ -3,35 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TeamDev</title>
+  <title>TeamDev — CIO + etc</title>
 
-  <!-- ✅ SEO & AI discover -->
-  <meta name="description" content="TeamDev — Android App & Website Developers from India. We build fast, modern, and creative apps with AI integration.">
-  <meta name="keywords" content="TeamDev, Android Developer, Web Developer, App Development, TeamDev India, AI Developer, App Publishing, JSON Validator, XML Tool">
-  <meta name="author" content="TeamDev">
-  <meta property="og:title" content="TeamDev — Android & Web Developers">
-  <meta property="og:description" content="We build Android apps and modern websites with AI-powered innovation.">
+  <!-- SEO & Social -->
+  <meta name="description" content="TeamDev — CIO + etc | Android & Web Developers from India. Fast apps, modern websites, AI tools, JSON Validator, XML Tool, Encode/Decode.">
+  <meta name="keywords" content="TeamDev, CIO + etc, Android Developer India, Web Developer, JSON Validator, XML Tool, Base64 Encode Decode, SSH Tools">
+  <meta property="og:title" content="TeamDev — CIO + etc | Android & Web Developers">
+  <meta property="og:description" content="We turn ideas into powerful Android apps and stunning websites. Free dev tools included!">
   <meta property="og:image" content="logo.png">
-  <meta property="og:type" content="website">
   <meta property="og:url" content="https://teamdev.netlify.app/">
 
   <link rel="icon" href="logo.png" type="image/png">
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Splash Video -->
+
+  <!-- Splash Screen -->
   <div id="splash">
     <video src="splash.mp4" autoplay muted loop playsinline></video>
     <div class="splash-text">
       <img src="logo.png" alt="TeamDev Logo" class="logo">
       <h1 class="teamdev">TeamDev</h1>
-      <p class="tagline">Tum dedo — hum banaenge (Android & Web Developers)</p>
+      <p class="tagline">CIO + etc</p>
+      <p class="tagline-sub">Tum dedo — hum banaenge</p>
     </div>
   </div>
 
-  <!-- Main Site -->
+  <!-- Header -->
   <header>
-    <img src="logo.png" alt="TeamDev Logo" class="nav-logo">
+    <div class="header-left">
+      <img src="logo.png" alt="TeamDev Logo" class="nav-logo">
+      <div class="brand-text">
+        <span class="main-name">TeamDev</span>
+        <span class="cio-etc">— CIO + etc</span>
+      </div>
+    </div>
     <nav>
       <a href="#services">Services</a>
       <a href="#about">About</a>
@@ -39,59 +48,99 @@
     </nav>
   </header>
 
+  <!-- Hero Section -->
   <section id="hero">
     <div class="hero-content">
-      <h1><span class="gradient">TeamDev</span></h1>
-      <p>We create Android Apps & Websites — powered by innovation and AI.</p>
+      <h1>
+        <span class="gradient">TeamDev</span>
+        <span class="cio-hero">— CIO + etc</span>
+      </h1>
+      <p>We build powerful Android apps & stunning websites — fast, clean, and creative.</p>
       
       <div class="hero-buttons">
         <button onclick="scrollToSection('services')">Explore Services</button>
         
-        <!-- NEW TOOL BUTTONS ADDED HERE -->
-        <a href="/JsonValidator" class="tool-btn">Json Validator</a>
-        <a href="/XMLTool" class="tool-btn">XML Tool</a>
-        <a href="/ID" class="tool-btn">Encode | Decode</a>
-        
+        <!-- Developer Tools -->
+        <a href="/JsonValidator" class="tool-btn">
+          <i class="fas fa-braces"></i> JSON Validator
+        </a>
+        <a href="/XMLTool" class="tool-btn">
+          <i class="fas fa-code"></i> XML Tool
+        </a>
+        <a href="/ID" class="tool-btn">
+          <i class="fas fa-shield-halved"></i> Encode | Decode
+        </a>
       </div>
     </div>
   </section>
 
+  <!-- Services -->
   <section id="services">
     <h2>Our Services</h2>
     <div class="cards">
       <div class="card">
-        <h3>📱 App Development</h3>
-        <p>We design and publish Android apps with modern UI and performance.</p>
+        <h3>Android App Development</h3>
+        <p>Modern, fast, Play Store-ready apps with beautiful UI/UX.</p>
       </div>
       <div class="card">
-        <h3>💻 Website Development</h3>
-        <p>Fast, responsive, and creative websites — powered by latest tech.</p>
+        <h3>Website Development</h3>
+        <p>Blazing-fast, responsive, SEO-optimized websites.</p>
       </div>
       <div class="card">
-        <h3>🚀 Publishing & Branding</h3>
-        <p>We help you publish apps and build your digital brand identity.</p>
+        <h3>App Publishing & Branding</h3>
+        <p>Full Google Play publishing, icons, banners & ASO.</p>
+      </div>
+      <div class="card">
+        <h3>Free Dev Tools</h3>
+        <p>JSON Validator • XML Formatter • Base64 • SSH Helpers</p>
       </div>
     </div>
   </section>
 
+  <!-- About -->
   <section id="about">
-    <h2>About TeamDev</h2>
+    <h2>About TeamDev — CIO + etc</h2>
     <p>
-      TeamDev is an India-based Android & Web Development team founded in 2025.  
-      We create modern mobile apps, websites, and AI-integrated projects.  
-      Our mission: turn your ideas into beautiful digital experiences.
+      Founded in 2025, we are a passionate team of developers from India who love building digital products that matter.
+      From Android apps to AI-powered websites and free developer tools — we do it all with love, speed, and precision.
     </p>
+    <p><strong>Motto:</strong> You dream it. We build it. Simple.</p>
   </section>
 
+  <!-- Contact / Social -->
   <section id="contact">
     <h2>Connect With Us</h2>
-    <p>Coming soon — social links & portfolio updates</p>
+    <div class="social-links">
+      <a href="https://instagram.com/teamdev.cio" target="_blank" class="social-btn instagram">
+        <i class="fab fa-instagram"></i> Instagram
+      </a>
+      <a href="https://linkedin.com/company/teamdev-cio" target="_blank" class="social-btn linkedin">
+        <i class="fab fa-linkedin-in"></i> LinkedIn
+      </a>
+      <a href="https://x.com/teamdev_cio" target="_blank" class="social-btn x">
+        <i class="fab fa-x-twitter"></i> X (Twitter)
+      </a>
+    </div>
+    <p style="margin-top: 30px; opacity: 0.9;">Got a project? DM us anytime!</p>
   </section>
 
+  <!-- Footer -->
   <footer>
-    <p>© 2025 TeamDev | Made with 💛 + 💚</p>
+    <p>© 2025 <strong>TeamDev — CIO + etc</strong> | Made with Love + Coffee in India</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script>
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Auto-hide splash after 4 seconds
+    setTimeout(() => {
+      document.getElementById('splash').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('splash').style.display = 'none';
+      }, 1000);
+    }, 4000);
+  </script>
 </body>
 </html>
