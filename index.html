@@ -18,6 +18,24 @@
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Added style for Support button to make it stand out but match your design */
+    .hero-buttons button.support-btn {
+      background: linear-gradient(135deg, #ff0844, #ffb199);
+      animation: pulse 2s infinite;
+      box-shadow: 0 4px 15px rgba(255, 8, 68, 0.3);
+    }
+    .hero-buttons button.support-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 8, 68, 0.4);
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 8, 68, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 8, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 8, 68, 0); }
+    }
+  </style>
 </head>
 <body>
 
@@ -59,6 +77,11 @@
       
       <div class="hero-buttons">
         <button onclick="scrollToSection('services')">Explore Services</button>
+        
+        <!-- SUPPORT TEAMDEV BUTTON ADDED HERE -->
+        <button class="support-btn" onclick="window.location.href='upi://pay?pa=mr-arman-01@fam&pn=TeamDev&tn=Thank%20you%20for%20supporting%20TeamDev!&cu=INR'">
+          <i class="fas fa-heart"></i> Support TeamDev
+        </button>
         
         <!-- Developer Tools -->
         <a href="/JsonValidator" class="tool-btn">
