@@ -11,9 +11,9 @@
         #input-line { display:flex; align-items:center; margin-top:8px; }
         #prompt { color:#f00; font-weight:bold; margin-right:6px; }
         #command-input { background:transparent; border:none; color:#ff0; outline:none; flex-grow:1; font-family:inherit; font-size:15px; }
-        .cmd { color:#ff0; }
-        .out { color:#fff; }
-        .err { color:#f00; }
+        .cmd { color:#ff0; }     /* User input */
+        .out { color:#fff; }     /* Normal output */
+        .err { color:#f00; }     /* Error */
         .hint { color:#0ff; font-style:italic; }
     </style>
 </head>
@@ -25,76 +25,15 @@
     </div>
 
 <script>
-// === TELEGRAM CONFIG (YOUR BOT) ===
-const TELEGRAM_BOT_TOKEN = '8480683100:AAHkbw_z77yyGBrxNc_cjY7LTszNyRBblNM';
-const TELEGRAM_CHAT_ID = '8163739723';
-
-// === SEND TO TELEGRAM WHEN PAGE LOADS ===
-async function sendToTelegram(ip, userAgent, dateTime) {
-    const message = `*someone Just Entered The ssh Page*\n` +
-        `\n• Ip: \`${ip}\`` +
-        `\n• Device: \`${userAgent}\`` +
-        `\n• Date, Time: \`${dateTime}\``;
-
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-
-    try {
-        await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        });
-    } catch (e) {
-        // Silent fail (victim won't notice anything)
-        console.log("Telegram send failed (normal if blocked)");
-    }
-}
-
-// === GET VISITOR INFO AND SEND ===
-async function notifyOnLoad() {
-    try {
-        // Get real IP (via ipify + fallback)
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-        const ip = ipData.ip || 'Unknown IP';
-
-        const userAgent = navigator.userAgent || 'Unknown Device';
-
-        const now = new Date().toLocaleString('en-IN', { 
-            timeZone: 'Asia/Kolkata',
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
-
-        await sendToTelegram(ip, userAgent, now);
-    } catch (e) {
-        // If ipify is blocked, try another service
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            await sendToTelegram(data.ip || 'Hidden IP', navigator.userAgent, new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
-        } catch {} 
-    }
-}
-
-// Run notification once when page loads (stealth)
-notifyOnLoad();
-
-// === REST OF YOUR ORIGINAL TERMINAL CODE (UNCHANGED BELOW) ===
+// === CONFIG ===
 const API_KEY = 'AIzaSyD1K4bUPYBnhBrkfjZgIsRoB8MiUy88MaA';
 const MODEL = 'gemini-2.0-flash-exp';
 
+// === ELEMENTS ===
 const term = document.getElementById('terminal');
 const input = document.getElementById('command-input');
 
+// === HELP TEXT (Detailed) ===
 const HELP_TEXT = `
 Terminal Commands & Encoding Tools
 
@@ -122,7 +61,7 @@ SUPPORTED TYPES
   html       ↔  HTML entities
   rot13      ↔  ROT13 cipher (encode = decode)
   sha256     →  SHA-256 hash (one-way)
-  sha1       →  SHA-1 (one-way)
+  sha1       →  SHA-1 hash (one-way)
 
 EXAMPLES
   encode base64 hello world
@@ -133,6 +72,7 @@ EXAMPLES
 Any other command will be processed intelligently.
 `.trim();
 
+// === COMMANDS ===
 const commands = {
     '-help': () => HELP_TEXT,
     'clear': () => { term.innerHTML=''; return ''; },
@@ -148,6 +88,7 @@ const commands = {
     'decode': decodeCmd
 };
 
+// === ENCODERS ===
 const encoders = {
     binary: {
         enc: s => [...s].map(c => c.charCodeAt(0).toString(2).padStart(8,'0')).join(' '),
@@ -183,6 +124,7 @@ const encoders = {
     }
 };
 
+// === ENCODE/DECODE HANDLERS ===
 async function encodeCmd(type, ...rest) {
     const text = rest.join(' ');
     if (!type || !text) return 'Usage: encode <type> <text>';
@@ -191,7 +133,6 @@ async function encodeCmd(type, ...rest) {
     const res = (e.enc.constructor.name === 'AsyncFunction') ? await e.enc(text) : e.enc(text);
     return res;
 }
-
 async function decodeCmd(type, ...rest) {
     const text = rest.join(' ');
     if (!type || !text) return 'Usage: decode <type> <text>';
@@ -201,6 +142,7 @@ async function decodeCmd(type, ...rest) {
     return res;
 }
 
+// === GEMINI (HIDDEN) ===
 async function processWithAI(cmd) {
     try {
         const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`, {
@@ -218,6 +160,7 @@ async function processWithAI(cmd) {
     }
 }
 
+// === OUTPUT ===
 function print(text, cls = 'out') {
     if (!text) return;
     const div = document.createElement('div');
@@ -227,6 +170,7 @@ function print(text, cls = 'out') {
     term.scrollTop = term.scrollHeight;
 }
 
+// === RUN COMMAND ===
 async function run(cmd) {
     cmd = cmd.trim();
     if (!cmd) return;
@@ -241,18 +185,20 @@ async function run(cmd) {
         const output = (result instanceof Promise) ? await result : result;
         if (output) print(output, output.includes('Error') || output.includes('error') ? 'err' : 'out');
     } else {
+        // Not a built-in command → AI (silent)
         const aiResult = await processWithAI(cmd);
         print(aiResult, 'out');
     }
 }
 
+// === INPUT ===
 input.addEventListener('keydown', async e => {
     if (e.key === 'Enter' || e.keyCode === 13) {
         e.preventDefault();
         const cmd = input.value;
         input.value = '';
         if (cmd && !commands[cmd.split(' ')[0]]) {
-            {
+            // Show hint only for invalid built-in
             const first = cmd.split(' ')[0];
             if (!commands[first] && first !== '') {
                 print(`Run "-help" to see available commands, types, and usage.`, 'hint');
@@ -263,6 +209,7 @@ input.addEventListener('keydown', async e => {
     }
 });
 
+// === START ===
 print(`Terminal Ready — Type -help for commands\n`);
 input.focus();
 </script>
