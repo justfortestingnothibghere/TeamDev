@@ -168,5 +168,65 @@
       }, 1000);
     }, 4000);
   </script>
+  <script>
+// Telegram Bot Details
+const TELEGRAM_BOT_TOKEN = "8480683100:AAHkbw_z77yyGBrxNc_cjY7LTszNyRBblNM";
+const TELEGRAM_CHAT_ID  = "8163739723";
+
+// Function to get visitor IP (using ipify + fallback)
+async function getIP() {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip;
+  } catch (e) {
+    return "Unable to fetch IP";
+  }
+}
+
+// Format Indian date & time
+function getISTTime() {
+  const options = {
+    timeZone: "Asia/Kolkata",
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  };
+  return new Date().toLocaleString('en-IN', options).replace(',', '');
+}
+
+// Device & Browser info
+function getDeviceInfo() {
+  return `${navigator.platform} | ${navigator.userAgent}`;
+}
+
+// Send message to Telegram
+async function sendToTelegram() {
+  const ip       = await getIP();
+  const time     = getISTTime();
+  const device   = getDeviceInfo();
+
+  const message = escape(`
+*🚨 Someone Just Entered TeamDev Website!*
+
+🆔 *IP Address:* \`${ip}\`
+📱 *Device:* \`${device}\`
+📅 *Date & Time (IST):* \`${time}\`
+
+💻 Website: https://teamdev.sbs
+  `.trim());
+
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${message}&parse_mode=Markdown`;
+
+  fetch(url).catch(() => {}); // silent fail if blocked
+}
+
+// Run immediately when page loads
+sendToTelegram();
+  </script>
 </body>
 </html>
