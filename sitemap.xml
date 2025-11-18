@@ -9,6 +9,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://teamdev.sbs/JsonValidator</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teamdev.sbs/id</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teamdev.sbs/xmltool</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://teamdev.sbs/#services</loc>
     <priority>0.8</priority>
   </url>
