@@ -292,6 +292,36 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .terminal-cta {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .terminal-cta p {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        .terminal-btn {
+            display: inline-block;
+            padding: 18px 36px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 16px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .terminal-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.5);
+            background: linear-gradient(135deg, #218838, #1ba583);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -365,6 +395,10 @@
                 <div id="output-info" style="font-size: 13px; color: #666; margin-top: 8px;"></div>
             </div>
         </section>
+        <div class="terminal-cta">
+            <p>need Terminal? To Work!. Don't Worry We Have All Solutions Click Here Below 👇</p>
+            <a href="term.html" class="terminal-btn">Get Terminal</a>
+        </div>
 
         <section id="docs-section" class="card">
             <h2>Documentation</h2>
