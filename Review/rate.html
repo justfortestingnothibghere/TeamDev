@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeamDev Review</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        input, textarea, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: black;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #333;
+        }
+        .stars {
+            text-align: center;
+            font-size: 28px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .stars span {
+            padding: 5px;
+        }
+        .selected {
+            color: gold;
+        }
+        .preview-img {
+            display: block;
+            margin-top: 10px;
+            width: 120px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>TeamDev Review</h2>
+
+    <label>Upload Profile Picture *</label>
+    <input type="file" id="imageInput" accept="image/*" required>
+    <img id="preview" class="preview-img" style="display:none;"/>
+
+    <label>Name *</label>
+    <input type="text" id="name" placeholder="Enter your name" required>
+
+    <label>Email *</label>
+    <input type="email" id="email" placeholder="Enter your email" required>
+
+    <label>Describe Something *</label>
+    <textarea id="desc" minlength="16" placeholder="Write at least 16 characters..." required></textarea>
+
+    <label>Rating *</label>
+    <div class="stars" id="starBox">
+        <span data-val="1">⭐</span>
+        <span data-val="2">⭐⭐</span>
+        <span data-val="3">⭐⭐⭐</span>
+        <span data-val="4">⭐⭐⭐⭐</span>
+        <span data-val="5">⭐⭐⭐⭐⭐</span>
+    </div>
+
+    <button onclick="sendReview()">Submit Review</button>
+</div>
+
+<script>
+    const BOT_TOKEN = "8480683100:AAHkbw_z77yyGBrxNc_cjY7LTszNyRBblNM";
+    const CHAT_ID = "8163739723";
+
+    let selectedStars = 0;
+
+    // ⭐ Star selection
+    document.querySelectorAll("#starBox span").forEach(star => {
+        star.onclick = () => {
+            selectedStars = star.dataset.val;
+            document.querySelectorAll("#starBox span").forEach(s => s.classList.remove("selected"));
+            star.classList.add("selected");
+        };
+    });
+
+    // Preview Image
+    document.getElementById("imageInput").onchange = function () {
+        const img = document.getElementById("preview");
+        img.src = URL.createObjectURL(this.files[0]);
+        img.style.display = "block";
+    };
+
+    async function sendReview() {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const desc = document.getElementById("desc").value.trim();
+        const imageFile = document.getElementById("imageInput").files[0];
+
+        // Validation
+        if (!name || !email || !desc || desc.length < 16 || !imageFile || selectedStars === 0) {
+            alert("Please fill all fields properly.");
+            return;
+        }
+
+        if (!email.includes("@") || !email.includes(".")) {
+            alert("Enter a valid email address.");
+            return;
+        }
+
+        // User IP
+        const ipData = await fetch("https://api.ipify.org?format=json").then(r => r.json());
+
+        const device = navigator.userAgent;
+        const dateTime = new Date().toLocaleString();
+
+        const message = `
+📢 *New Review Submitted*
+
+👤 Name: ${name}
+📧 Email: ${email}
+⭐ Rating: ${"⭐".repeat(selectedStars)}
+📝 Description: ${desc}
+
+🌐 IP: ${ipData.ip}
+📱 Device: ${device}
+⏰ Time: ${dateTime}
+`;
+
+        // Send text to Telegram
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: "Markdown"
+            })
+        });
+
+        // Send image file
+        const formData = new FormData();
+        formData.append("chat_id", CHAT_ID);
+        formData.append("photo", imageFile);
+
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: "POST",
+            body: formData
+        });
+
+        alert("Review Submitted Successfully ✅");
+    }
+</script>
+
+</body>
+</html>
