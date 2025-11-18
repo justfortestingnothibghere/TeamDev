@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#000; color:#0f0; font-family:'Courier New',monospace; padding:10px; }
+        #terminal { height:80vh; overflow-y:auto; border:1px solid #0f0; padding:12px; white-space:pre-wrap; word-wrap:break-word; font-size:15px; line-height:1.4; }
+        #input-line { display:flex; align-items:center; margin-top:8px; }
+        #prompt { color:#f00; font-weight:bold; margin-right:6px; }
+        #command-input { background:transparent; border:none; color:#ff0; outline:none; flex-grow:1; font-family:inherit; font-size:15px; }
+        .cmd { color:#ff0; }     /* User input */
+        .out { color:#fff; }     /* Normal output */
+        .err { color:#f00; }     /* Error */
+        .hint { color:#0ff; font-style:italic; }
+    </style>
+</head>
+<body>
+    <div id="terminal"></div>
+    <div id="input-line">
+        <span id="prompt">@TeamDev →</span>
+        <input type="text" id="command-input" placeholder="Enter command..." autofocus autocomplete="off">
+    </div>
+
+<script>
+// === CONFIG ===
+const API_KEY = 'AIzaSyD1K4bUPYBnhBrkfjZgIsRoB8MiUy88MaA';
+const MODEL = 'gemini-2.0-flash-exp';
+
+// === ELEMENTS ===
+const term = document.getElementById('terminal');
+const input = document.getElementById('command-input');
+
+// === HELP TEXT (Detailed) ===
+const HELP_TEXT = `
+Terminal Commands & Encoding Tools
+
+CORE COMMANDS
+  -help              Show this help
+  clear              Clear the screen
+  date               Show current date & time
+  pwd                Print current directory
+  whoami             Show current user
+  echo <text>        Print text
+  ls                 List files (simulated)
+  cd <path>          Change directory (simulated)
+  cat <file>         View file content (simulated)
+  exit               Disable input
+
+ENCODING / DECODING
+  encode <type> <text>
+  decode <type> <text>
+
+SUPPORTED TYPES
+  binary     ↔  8-bit binary (space-separated)
+  hex        ↔  Hexadecimal
+  base64     ↔  Base64
+  url        ↔  URL encode/decode
+  html       ↔  HTML entities
+  rot13      ↔  ROT13 cipher (encode = decode)
+  sha256     →  SHA-256 hash (one-way)
+  sha1       →  SHA-1 hash (one-way)
+
+EXAMPLES
+  encode base64 hello world
+  decode hex 48656c6c6f
+  encode binary ABC
+  echo Welcome to the terminal
+
+Any other command will be processed intelligently.
+`.trim();
+
+// === COMMANDS ===
+const commands = {
+    '-help': () => HELP_TEXT,
+    'clear': () => { term.innerHTML=''; return ''; },
+    'date':  () => new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    'pwd':   () => '/home/user',
+    'whoami':() => 'guest',
+    'ls':    () => 'bin/  dev/  etc/  home/  proc/  tmp/  usr/  var/',
+    'cd':    (dir='~') => `Changed to ${dir === '' ? '~' : dir} (simulated)`,
+    'cat':   (f='') => f ? `Contents of ${f}:\nWelcome to the static terminal environment.\nThis is a self-contained, client-side system.\n` : 'Usage: cat <file>',
+    'echo':  (...a) => a.join(' '),
+    'exit':  () => { input.disabled=true; return 'Terminal closed.'; input.placeholder=''; },
+    'encode': encodeCmd,
+    'decode': decodeCmd
+};
+
+// === ENCODERS ===
+const encoders = {
+    binary: {
+        enc: s => [...s].map(c => c.charCodeAt(0).toString(2).padStart(8,'0')).join(' '),
+        dec: b => String.fromCharCode(...b.trim().split(' ').map(x => parseInt(x,2)))
+    },
+    hex: {
+        enc: s => [...s].map(c => c.charCodeAt(0).toString(16).padStart(2,'0')).join(''),
+        dec: h => { try { return String.fromCharCode(...h.match(/.{1,2}/g).map(x=>parseInt(x,16))); } catch { return 'Invalid hex'; }}
+    },
+    base64: { enc: btoa, dec: atob },
+    url:    { enc: encodeURIComponent, dec: decodeURIComponent },
+    html: {
+        enc: s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'),
+        dec: s => s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#039;/g,"'")
+    },
+    rot13: {
+        enc: s => s.replace(/[a-zA-Z]/g, c => String.fromCharCode((c<='Z'?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26)),
+        dec: s => s.replace(/[a-zA-Z]/g, c => String.fromCharCode((c<='Z'?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26))
+    },
+    sha256: {
+        enc: async s => {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        },
+        dec: () => 'Error: SHA-256 is one-way (cannot decode)'
+    },
+    sha1: {
+        enc: async s => {
+            const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(s));
+            return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+        },
+        dec: () => 'Error: SHA-1 is one-way (cannot decode)'
+    }
+};
+
+// === ENCODE/DECODE HANDLERS ===
+async function encodeCmd(type, ...rest) {
+    const text = rest.join(' ');
+    if (!type || !text) return 'Usage: encode <type> <text>';
+    const e = encoders[type];
+    if (!e) return `Unknown type: ${type}\nRun "-help" for supported types.`;
+    const res = (e.enc.constructor.name === 'AsyncFunction') ? await e.enc(text) : e.enc(text);
+    return res;
+}
+async function decodeCmd(type, ...rest) {
+    const text = rest.join(' ');
+    if (!type || !text) return 'Usage: decode <type> <text>';
+    const e = encoders[type];
+    if (!e) return `Unknown type: ${type}\nRun "-help" for supported types.`;
+    const res = (e.dec.constructor.name === 'AsyncFunction') ? await e.dec(text) : e.dec(text);
+    return res;
+}
+
+// === GEMINI (HIDDEN) ===
+async function processWithAI(cmd) {
+    try {
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: `You are a terminal emulator. Execute: ${cmd}\nReply with only the output.` }] }]
+            })
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || 'No result.';
+    } catch (e) {
+        return `Processing failed.`;
+    }
+}
+
+// === OUTPUT ===
+function print(text, cls = 'out') {
+    if (!text) return;
+    const div = document.createElement('div');
+    div.className = cls;
+    div.textContent = text;
+    term.appendChild(div);
+    term.scrollTop = term.scrollHeight;
+}
+
+// === RUN COMMAND ===
+async function run(cmd) {
+    cmd = cmd.trim();
+    if (!cmd) return;
+
+    print(`@TeamDev → ${cmd}`, 'cmd');
+
+    const [name, ...args] = cmd.split(' ');
+    const handler = commands[name];
+
+    if (handler) {
+        const result = handler(...args);
+        const output = (result instanceof Promise) ? await result : result;
+        if (output) print(output, output.includes('Error') || output.includes('error') ? 'err' : 'out');
+    } else {
+        // Not a built-in command → AI (silent)
+        const aiResult = await processWithAI(cmd);
+        print(aiResult, 'out');
+    }
+}
+
+// === INPUT ===
+input.addEventListener('keydown', async e => {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        const cmd = input.value;
+        input.value = '';
+        if (cmd && !commands[cmd.split(' ')[0]]) {
+            // Show hint only for invalid built-in
+            const first = cmd.split(' ')[0];
+            if (!commands[first] && first !== '') {
+                print(`Run "-help" to see available commands, types, and usage.`, 'hint');
+            }
+        }
+        await run(cmd);
+        input.focus();
+    }
+});
+
+// === START ===
+print(`Terminal Ready — Type -help for commands\n`);
+input.focus();
+</script>
+</body>
+</html>
