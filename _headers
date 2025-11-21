@@ -1,0 +1,13 @@
+/*
+  X-Robots-Tag: noai, noimageai, nosnippet
+  X-Content-Type-Options: nosniff
+
+  # Block curl / wget / scrapers
+  User-Agent: curl
+  Status: 403
+
+  User-Agent: Wget
+  Status: 403
+
+  User-Agent: python
+  Status: 403
