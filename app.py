@@ -130,12 +130,23 @@ def catch_all(path):
     # 404.html will be handled by errorhandler above
     abort(404)
 
-# Tool shortcuts
-@app.route("/jsonvalidator")   ; def _(): return redirect("/jsonvalidator/", 301)
-@app.route("/id")              ; def _(): return redirect("/id/", 301)
-@app.route("/xmltool")         ; def _(): return redirect("/xmltool/", 301)
-@app.route("/review")          ; def _(): return redirect("/review/", 301)
+@app.route('/id', strict_slashes=False)
+def id_page():
+    return send_from_directory('ID', 'index.html')
 
+
+@app.route('/jsonvalidator', strict_slashes=False)
+def json_validator():
+    return send_from_directory('JsonValidator', 'index.html')
+
+@app.route('/xmltool', strict_slashes=False)
+def xml_tool():
+    return send_from_directory('XMLTool', 'index.html')
+
+@app.route('/review', strict_slashes=False)
+def review():
+    return send_from_directory('Review', 'index.html')
+    
 # ====================== ADMIN PANEL ======================
 @app.route("/login", methods=["GET", "POST"])
 def login():
