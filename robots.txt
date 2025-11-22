@@ -1,3 +1,10 @@
+User-agent: Googlebot
+Allow: /
+
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /maintenance-on
+Disallow: /maintenance-off
+
 Sitemap: https://teamdev.sbs/sitemap.xml
