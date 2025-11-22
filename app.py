@@ -148,15 +148,15 @@ def id_page():
     return send_from_directory('ID', 'index.html')
 
 
-@app.route('/JsonValidator', strict_slashes=False)
+@app.route('/jsonvalidator', strict_slashes=False)
 def json_validator():
     return send_from_directory('JsonValidator', 'index.html')
 
-@app.route('/XMLTool', strict_slashes=False)
+@app.route('/xmltool', strict_slashes=False)
 def xml_tool():
     return send_from_directory('XMLTool', 'index.html')
 
-@app.route('/Review', strict_slashes=False)
+@app.route('/review', strict_slashes=False)
 def review():
     return send_from_directory('Review', 'index.html')
 
