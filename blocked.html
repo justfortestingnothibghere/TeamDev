@@ -1,8 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head><title>403 Forbidden</title></head>
-<body style="background:#000;color:#0f0;font-family:monospace;text-align:center;padding:50px">
-<h1>403 Forbidden</h1>
-<p>Automated access is not permitted.</p>
+<head>
+    <title>403 Forbidden</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Ye sabse harami part hai -->
+    <style>
+        * { cursor: none !important; }
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            user-select: none;
+        }
+        canvas { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <h1>403 Forbidden</h1>
+    <p>Automated access is not permitted.</p>
+    <p>Bot nahi, insaan hai to F5 daba ke 10 second wait kar, warna nikal yahaan se 🖕</p>
+
+    <!-- Infinite redirect loop for headless browsers & scrapers -->
+    <script>
+        // 1. Fake content jo scrapers parse karte reh jayein
+        setInterval(() => {
+            document.body.innerHTML += "<div style='display:none'>"+Math.random()+"</div>";
+        }, 10);
+
+        // 2. Mouse movement check (real user nahi to redirect hell)
+        let mouseMoved = false;
+        document.addEventListener('mousemove', () => mouseMoved = true);
+        document.addEventListener('touchstart', () => mouseMoved = true);
+
+        // 3. Canvas fingerprint + infinite animation (headless detect)
+        const canvas = document.createElement('canvas');
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        let x = 0;
+        setInterval(() => {
+            ctx.fillStyle = `hsl(${x}, 100%, 50%)`;
+            ctx.fillRect(0, 0, innerWidth, innerHeight);
+            x += 0.5;
+        }, 16);
+
+        // 4. Har 2-5 sec mein random redirect (scrapers pagal)
+        if (!mouseMoved) {
+            setTimeout(() => {
+                if (!mouseMoved) {
+                    const paths = ["/","/login","/admin","/wp-admin","/robots.txt","/.git","/api/v1","/sitemap.xml","/random"+Math.random()];
+                    window.location = paths[Math.floor(Math.random()*paths.length)] + "?t=" + Date.now();
+                }
+            }, Math.random()*3000 + 2000);
+        }
+
+        // 5. navigator.webdriver / headless check
+        if (navigator.webdriver || !navigator.plugins.length || screen.width === 0) {
+            setInterval(() => {
+                window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // optional rickroll 😈
+            }, 1000);
+        }
+
+        // 6. Infinite DOM mutation (cheerio, beautifulsoup roye)
+        setInterval(() => {
+            const div = document.createElement('div');
+            div.innerHTML = "<p hidden>" + btoa(Math.random()) + "</p>";
+            document.body.appendChild(div);
+        }, 50);
+    </script>
+
+    <!-- Extra troll -->
+    <noscript>
+        <meta http-equiv="refresh" content="0; url=https://http.cat/403">
+    </noscript>
 </body>
 </html>
